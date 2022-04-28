@@ -113,7 +113,7 @@ class App:
                     correct += 1
         self.input = StringVar()
         accuracy = correct / total * 100
-        label1 = Label(self.window, text='Accuracy: ' + str(round(accuracy, 2)) + '%',
+        label1 = Label(self.window, text='Accuracy: ' + str(round(accuracy, 1)) + '%',
                        font=("Arial Bold", 24), fg='red')
         label1.place(x=300, y=100)
         if round(accuracy) > 90:
@@ -238,7 +238,8 @@ class App:
 
     def go_home(self) -> None:
         """Return to the home GUI"""
-        self.confirm_window.destroy()
+        if self.confirm_window is not None:
+            self.confirm_window.destroy()
         self.input = StringVar()
         self.current_test = ''
         self.streak = 0
