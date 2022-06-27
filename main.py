@@ -2,6 +2,7 @@
 from tkinter import *
 import csv
 from typing import Optional
+from PIL import Image, ImageTk
 import random
 
 
@@ -18,14 +19,13 @@ class App:
     input: StringVar
     current_test: str
 
+    # Initialize the application window
     def __init__(self):
         self.window = Tk()
-        # self.window['background'] = '#323232'
-        # self.background = '#323232'
         self.window.title('TypeTeacher')
         self.window.geometry("800x800+320+10")
         self.tests = read_data('data.csv')
-        start_button = Button(self.window, text='START', font=("Arial Bold", 20), command=self.start)
+        start_button = Button(self.window, text='START', font=("Arial Bold", 20), command=self.start_day)
         start_button.place(x=345, y=300)
         self.confirm_window = None
         self.medium_allowed = False
@@ -34,9 +34,14 @@ class App:
         self.current_level = 'Easy'
         self.input = StringVar()
         self.current_test = ''
+        img = ImageTk.PhotoImage(Image.open("Untitled-1.png").resize((570, 200)))
+        panel = Label(self.window, image=img)
+        panel.pack()
+        self.day_night = 'day'
         self.window.mainloop()
 
-    def start(self) -> None:
+    # Start the application window in day mode
+    def start_day(self) -> None:
         """Start the program"""
         self.clear()
         self.add_home()
@@ -54,12 +59,63 @@ class App:
         else:
             hard = Button(self.window, text='Hard', font=("Arial", 20), command=self.hard)
         hard.place(x=470, y=300)
+        day = Button(self.window, text='Day Mode', font=("Arial", 12), command=self.day)
+        day.place(x=700, y=10)
+        night = Button(self.window, text='Night Mode', font=("Arial", 12), command=self.night)
+        night.place(x=696, y=40)
 
+    # Start the application window in night mode
+    def start_night(self) -> None:
+        """Start the program"""
+        self.clear()
+        self.add_home()
+        label = Label(self.window, text='Pick a difficulty level.', font=("Arial Bold", 20), fg='white')
+        label.place(x=300, y=200)
+        label.config(bg='#323232')
+        easy = Button(self.window, text='Easy', font=("Arial", 20), command=self.easy)
+        easy.place(x=250, y=300)
+        easy.config(bg='#323232')
+        if not self.medium_allowed:
+            medium = Button(self.window, text='Medium', font=("Arial", 20), command=self.medium,
+                            bg='grey', fg='grey')
+        else:
+            medium = Button(self.window, text='Medium', font=("Arial", 20), command=self.medium, bg='grey')
+        medium.place(x=345, y=300)
+        if not self.hard_allowed:
+            hard = Button(self.window, text='Hard', font=("Arial", 20), command=self.hard, fg='grey')
+            hard.config(bg='#323232')
+        else:
+            hard = Button(self.window, text='Hard', font=("Arial", 20), command=self.hard)
+            hard.config(bg='#323232')
+        hard.place(x=470, y=300)
+        day = Button(self.window, text='Day Mode', font=("Arial", 12), command=self.day)
+        day.place(x=700, y=10)
+        day.config(bg='#323232')
+        night = Button(self.window, text='Night Mode', font=("Arial", 12), command=self.night)
+        night.place(x=696, y=40)
+        night.config(bg='#323232')
+
+    # Set the window in night mode
+    def night(self) -> None:
+        self.window['background'] = '#323232'
+        self.day_night = 'night'
+        self.clear()
+        self.start_night()
+
+    # Set the window in day mode
+    def day(self) -> None:
+        self.window['background'] = '#EBEBEB'
+        self.day_night = 'day'
+        self.clear()
+        self.start_day()
+
+    # Set the difficulty to easy and begin a test
     def easy(self) -> None:
         """Easy difficulty"""
         self.current_level = 'Easy'
         self.begin_test()
 
+    # Begin a typing test
     def test(self) -> None:
         """Begin a test based on self.current_level"""
         self.clear()
@@ -73,6 +129,7 @@ class App:
         submit = Button(self.window, text='SUBMIT', font=("Arial Bold", 20), command=self.submit)
         submit.place(x=340, y=500)
 
+    # Display the test on the window
     def display_test(self, picked_test: str) -> None:
         """Display <picked_test> on multiple lines."""
         multiplier = 0
@@ -96,6 +153,7 @@ class App:
             test.place(x=10, y=50 + (multiplier * 25))
             multiplier += 1
 
+    # Submit the typed text and evaluate
     def submit(self) -> None:
         """Submit the entered text and evaluate the accuracy"""
         self.clear()
@@ -103,19 +161,50 @@ class App:
         answer = self.input.get()
         total = len(self.current_test)
         correct = 0
-        if len(answer) == len(self.current_test) or len(answer) > len(self.current_test):
-            for i in range(len(self.current_test)):
-                if self.current_test[i] == answer[i]:
-                    correct += 1
-        elif len(answer) < len(self.current_test):
-            for i in range(len(answer)):
-                if self.current_test[i] == answer[i]:
-                    correct += 1
+        mistakes = {'skipped': 0, 'extra': 0, 'punctuation': 0, 'incorrect': 0}
+
+        if len(answer) >= len(self.current_test):
+            length = len(self.current_test)
+        else:
+            length = len(answer)
+
+        i = 0
+        while i != length:
+            if self.current_test[i] == answer[i]:
+                correct += 1
+                i += 1
+            elif i < length - 1 and self.current_test[i] == answer[i + 1]:
+                if answer[i] in ' ,.!;\"\'()':
+                    mistakes['punctuation'] += 1
+                else:
+                    mistakes['extra'] += 1
+                answer = answer[:i] + answer[i + 1:]
+                if length == len(answer) + 1:
+                    length -= 1
+                if i > length:
+                    i = length
+                else:
+                    i += 1
+            elif i < length - 1 and self.current_test[i + 1] == answer[i]:
+                if self.current_test[i] in ' ,.!;\"\'()':
+                    mistakes['punctuation'] += 1
+                else:
+                    mistakes['extra'] += 1
+                mistakes['skipped'] += 1
+                answer = answer[:i] + self.current_test[i] + answer[i + 1:]
+                if length == len(answer) - 1:
+                    length += 1
+                i += 1
+            else:
+                mistakes['incorrect'] += 1
+                i += 1
+
         self.input = StringVar()
         accuracy = correct / total * 100
         label1 = Label(self.window, text='Accuracy: ' + str(round(accuracy, 1)) + '%',
                        font=("Arial Bold", 24), fg='red')
         label1.place(x=300, y=100)
+
         if round(accuracy) > 90:
             self.streak += 1
             if self.streak < 3:
@@ -126,7 +215,22 @@ class App:
                 button.place(x=335, y=300)
                 label2 = Label(self.window, text='Get a streak of 3 to proceed to the next level.',
                                font=("Arial Bold", 16))
-                label2.place(x=235, y=500)
+                label2.place(x=220, y=500)
+
+                mistake = Label(self.window, text='Mistakes', font=("Arial Bold", 20), fg='red')
+                mistake.place(x=345, y=500)
+                skipped = Label(self.window, text='Skipped Character: ' + str(mistakes['skipped']),
+                                font=("Arial", 14))
+                skipped.place(x=320, y=570)
+                extra = Label(self.window, text='Extra Character: ' + str(mistakes['extra']),
+                              font=("Arial", 14))
+                extra.place(x=335, y=550)
+                punctuation = Label(self.window, text='Punctuation: ' + str(mistakes['punctuation']),
+                                    font=("Arial", 14))
+                punctuation.place(x=345, y=590)
+                incorrect = Label(self.window, text='Incorrect Character: ' + str(mistakes['incorrect']),
+                                  font=("Arial", 14))
+                incorrect.place(x=320, y=530)
             else:
                 label3 = Label(self.window, text='Easy: Completed!', font=("Arial Bold", 24), fg='red')
                 label3.place(x=310, y=200)
@@ -136,6 +240,7 @@ class App:
                     self.medium_allowed = True
                 elif not self.hard_allowed:
                     self.hard_allowed = True
+
         else:
             self.streak = 0
             label4 = Label(self.window, text='Current streak: ' + str(self.streak) + '!',
@@ -145,8 +250,24 @@ class App:
             button.place(x=320, y=300)
             label2 = Label(self.window, text='Get a streak of 3 to proceed to the next level.',
                            font=("Arial Bold", 16))
-            label2.place(x=235, y=500)
+            label2.place(x=220, y=400)
 
+            mistake = Label(self.window, text='Mistakes', font=("Arial Bold", 20), fg='red')
+            mistake.place(x=345, y=500)
+            skipped = Label(self.window, text='Skipped Character: ' + str(mistakes['skipped']),
+                            font=("Arial", 14))
+            skipped.place(x=320, y=570)
+            extra = Label(self.window, text='Extra Character: ' + str(mistakes['extra']),
+                          font=("Arial", 14))
+            extra.place(x=335, y=550)
+            punctuation = Label(self.window, text='Punctuation: ' + str(mistakes['punctuation']),
+                                font=("Arial", 14))
+            punctuation.place(x=345, y=590)
+            incorrect = Label(self.window, text='Incorrect Character: ' + str(mistakes['incorrect']),
+                              font=("Arial", 14))
+            incorrect.place(x=320, y=530)
+
+    # Pick a random test of the set difficulty
     def pick_test(self) -> str:
         """Pick a test based on self.current_level"""
         if self.current_level == 'Easy':
@@ -165,6 +286,7 @@ class App:
                 random_choice = random.choice(list(self.tests.keys()))
             return self.tests[random_choice]
 
+    # Start a test
     def begin_test(self) -> None:
         """Begin test page"""
         self.clear()
@@ -177,6 +299,7 @@ class App:
         begin = Button(self.window, text='BEGIN', font=("Arial Bold", 20), command=self.test)
         begin.place(x=350, y=200)
 
+    # Set the difficulty to medium and begin a test
     def medium(self) -> None:
         """Medium difficulty"""
         if self.medium_allowed:
@@ -191,6 +314,7 @@ class App:
             label2 = Label(temp, text='Complete lower difficulties to continue.', font=("Arial", 14))
             label2.place(x=80, y=50)
 
+    # Set the difficulty to hard and begin a test
     def hard(self) -> None:
         """Hard difficulty"""
         if self.hard_allowed:
@@ -205,19 +329,27 @@ class App:
             label2 = Label(temp, text='Complete lower difficulties to continue.', font=("Arial", 14))
             label2.place(x=80, y=50)
 
+    # Clear the application window
     def clear(self) -> None:
         """Clear all widgets"""
         for widgets in self.window.winfo_children():
             widgets.destroy()
 
+    # Add the home button
     def add_home(self) -> None:
         """Add a home button in the top left"""
-        button = Button(self.window, text='Home', font=("Arial Bold", 14), command=self.confirm)
+        if self.day_night == 'day':
+            button = Button(self.window, text='Home', font=("Arial Bold", 14), command=self.confirm)
+        else:
+            button = Button(self.window, bg='red', text='Home', font=("Arial Bold", 14), command=self.confirm)
         button.place(x=10, y=10)
 
+    # Confirm that the user wants to go home
     def confirm(self) -> None:
         """Confirm whether the user wants to go home"""
         self.confirm_window = Tk()
+        if self.day_night == 'night':
+            self.confirm_window['background'] = '#323232'
         self.confirm_window.title('Go home?')
         self.confirm_window.geometry("400x100+500+300")
         label = Label(self.confirm_window, text='Are you sure you want to return home?')
@@ -231,11 +363,13 @@ class App:
         no_button.place(x=205, y=50)
         self.confirm_window.mainloop()
 
+    # Close the confirmation window to go home
     def cancel_go_home(self) -> None:
         """Close the go home confirmation window."""
         self.confirm_window.destroy()
         self.confirm_window = None
 
+    # Go to the home page
     def go_home(self) -> None:
         """Return to the home GUI"""
         if self.confirm_window is not None:
@@ -244,10 +378,13 @@ class App:
         self.current_test = ''
         self.streak = 0
         self.clear()
-        start_button = Button(self.window, text='START', font=("Arial Bold", 20), command=self.start)
-        start_button.place(x=345, y=300)
+        if self.day_night == 'day':
+            self.start_day()
+        else:
+            self.start_night()
 
 
+# Read the tests and load them into a dictionary
 def read_data(file_name: str) -> dict:
     """Read the tests in <file_name> and return a dictionary mapping of the difficulty of
     the test to the test and its length"""
@@ -259,5 +396,6 @@ def read_data(file_name: str) -> dict:
     return mapping
 
 
+# Open an application window upon running this file
 if __name__ == '__main__':
     app = App()
