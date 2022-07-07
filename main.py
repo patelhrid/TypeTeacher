@@ -25,7 +25,7 @@ class App:
         self.window.title('TypeTeacher')
         self.window.geometry("800x800+320+10")
         self.tests = read_data('data.csv')
-        start_button = Button(self.window, text='START', font=("Arial Bold", 20), command=self.start_day)
+        start_button = Button(self.window, text='START', font=("Proxima Nova Bold", 20), command=self.start_day)
         start_button.place(x=345, y=300)
         self.confirm_window = None
         self.medium_allowed = False
@@ -45,23 +45,23 @@ class App:
         """Start the program"""
         self.clear()
         self.add_home()
-        label = Label(self.window, text='Pick a difficulty level.', font=("Arial Bold", 20))
+        label = Label(self.window, text='Pick a difficulty level.', font=("Proxima Nova Bold", 20))
         label.place(x=300, y=200)
-        easy = Button(self.window, text='Easy', font=("Arial", 20), command=self.easy)
+        easy = Button(self.window, text='Easy', font=("Proxima Nova Regular", 20), command=self.easy)
         easy.place(x=250, y=300)
         if not self.medium_allowed:
-            medium = Button(self.window, text='Medium', font=("Arial", 20), command=self.medium, fg='grey')
+            medium = Button(self.window, text='Medium', font=("Proxima Nova Regular", 20), command=self.medium, fg='grey')
         else:
-            medium = Button(self.window, text='Medium', font=("Arial", 20), command=self.medium)
+            medium = Button(self.window, text='Medium', font=("Proxima Nova Regular", 20), command=self.medium)
         medium.place(x=345, y=300)
         if not self.hard_allowed:
-            hard = Button(self.window, text='Hard', font=("Arial", 20), command=self.hard, fg='grey')
+            hard = Button(self.window, text='Hard', font=("Proxima Nova Regular", 20), command=self.hard, fg='grey')
         else:
-            hard = Button(self.window, text='Hard', font=("Arial", 20), command=self.hard)
+            hard = Button(self.window, text='Hard', font=("Proxima Nova Regular", 20), command=self.hard)
         hard.place(x=470, y=300)
-        day = Button(self.window, text='Day Mode', font=("Arial", 12), command=self.day)
+        day = Button(self.window, text='Day Mode', font=("Proxima Nova Regular", 12), command=self.day)
         day.place(x=700, y=10)
-        night = Button(self.window, text='Night Mode', font=("Arial", 12), command=self.night)
+        night = Button(self.window, text='Night Mode', font=("Proxima Nova Regular", 12), command=self.night)
         night.place(x=696, y=40)
 
     # Start the application window in night mode
@@ -69,29 +69,29 @@ class App:
         """Start the program"""
         self.clear()
         self.add_home()
-        label = Label(self.window, text='Pick a difficulty level.', font=("Arial Bold", 20), fg='white')
+        label = Label(self.window, text='Pick a difficulty level.', font=("Proxima Nova Bold", 20), fg='white')
         label.place(x=300, y=200)
         label.config(bg='#323232')
-        easy = Button(self.window, text='Easy', font=("Arial", 20), command=self.easy)
+        easy = Button(self.window, text='Easy', font=("Proxima Nova Regular", 20), command=self.easy)
         easy.place(x=250, y=300)
         easy.config(bg='#323232')
         if not self.medium_allowed:
-            medium = Button(self.window, text='Medium', font=("Arial", 20), command=self.medium,
+            medium = Button(self.window, text='Medium', font=("Proxima Nova Regular", 20), command=self.medium,
                             bg='grey', fg='grey')
         else:
-            medium = Button(self.window, text='Medium', font=("Arial", 20), command=self.medium, bg='grey')
+            medium = Button(self.window, text='Medium', font=("Proxima Nova Regular", 20), command=self.medium, bg='grey')
         medium.place(x=345, y=300)
         if not self.hard_allowed:
-            hard = Button(self.window, text='Hard', font=("Arial", 20), command=self.hard, fg='grey')
+            hard = Button(self.window, text='Hard', font=("Proxima Nova Regular", 20), command=self.hard, fg='grey')
             hard.config(bg='#323232')
         else:
-            hard = Button(self.window, text='Hard', font=("Arial", 20), command=self.hard)
+            hard = Button(self.window, text='Hard', font=("Proxima Nova Regular", 20), command=self.hard)
             hard.config(bg='#323232')
         hard.place(x=470, y=300)
-        day = Button(self.window, text='Day Mode', font=("Arial", 12), command=self.day)
+        day = Button(self.window, text='Day Mode', font=("Proxima Nova Regular", 12), command=self.day)
         day.place(x=700, y=10)
         day.config(bg='#323232')
-        night = Button(self.window, text='Night Mode', font=("Arial", 12), command=self.night)
+        night = Button(self.window, text='Night Mode', font=("Proxima Nova Regular", 12), command=self.night)
         night.place(x=696, y=40)
         night.config(bg='#323232')
 
@@ -123,11 +123,14 @@ class App:
         picked_test = self.pick_test()
         self.current_test = picked_test
         self.display_test(picked_test)
-        type_window = Entry(self.window, textvariable=self.input, highlightthickness=2)
-        type_window.configure(highlightbackground="red", highlightcolor="red", width=50)
+        # type_window = Entry(self.window, textvariable=self.input, highlightthickness=2)
+        # type_window.configure(highlightbackground="red", highlightcolor="red", width=50)
+        type_window = Entry(self.window, textvariable=self.input, width=50)
         type_window.place(x=170, y=470)
-        submit = Button(self.window, text='SUBMIT', font=("Arial Bold", 20), command=self.submit)
+        submit = Button(self.window, text='SUBMIT', font=("Proxima Nova Bold", 20), command=self.submit)
         submit.place(x=340, y=500)
+        if self.day_night == 'night':
+            submit.config(bg='#323232', fg='#EBEBEB')
 
     # Display the test on the window
     def display_test(self, picked_test: str) -> None:
@@ -149,8 +152,10 @@ class App:
                         count += 1
                 else:
                     count = 100
-            test = Label(self.window, text=to_place, font=("Arial", 16))
+            test = Label(self.window, text=to_place, font=("Proxima Nova Regular", 16))
             test.place(x=10, y=50 + (multiplier * 25))
+            if self.day_night == 'night':
+                test.config(bg='#323232', fg='#EBEBEB')
             multiplier += 1
 
     # Submit the typed text and evaluate
@@ -202,40 +207,54 @@ class App:
         self.input = StringVar()
         accuracy = correct / total * 100
         label1 = Label(self.window, text='Accuracy: ' + str(round(accuracy, 1)) + '%',
-                       font=("Arial Bold", 24), fg='red')
+                       font=("Proxima Nova Bold", 24), fg='red')
         label1.place(x=300, y=100)
+        if self.day_night == 'night':
+            label1.config(bg='#323232', fg='pink')
 
         if round(accuracy) > 90:
             self.streak += 1
             if self.streak < 3:
                 label3 = Label(self.window, text='Current streak: ' + str(self.streak) + '!',
-                               font=("Arial Bold", 24), fg='red')
+                               font=("Proxima Nova Bold", 24), fg='red')
                 label3.place(x=290, y=200)
-                button = Button(self.window, text='Next Test', font=("Arial Bold", 20), command=self.begin_test)
+                button = Button(self.window, text='Next Test', font=("Proxima Nova Bold", 20), command=self.begin_test)
                 button.place(x=335, y=300)
                 label2 = Label(self.window, text='Get a streak of 3 to proceed to the next level.',
-                               font=("Arial Bold", 16))
+                               font=("Proxima Nova Bold", 16))
                 label2.place(x=220, y=500)
 
-                mistake = Label(self.window, text='Mistakes', font=("Arial Bold", 20), fg='red')
+                mistake = Label(self.window, text='Mistakes', font=("Proxima Nova Bold", 20), fg='red')
                 mistake.place(x=345, y=500)
                 skipped = Label(self.window, text='Skipped Character: ' + str(mistakes['skipped']),
-                                font=("Arial", 14))
+                                font=("Proxima Nova Regular", 14))
                 skipped.place(x=320, y=570)
                 extra = Label(self.window, text='Extra Character: ' + str(mistakes['extra']),
-                              font=("Arial", 14))
+                              font=("Proxima Nova Regular", 14))
                 extra.place(x=335, y=550)
                 punctuation = Label(self.window, text='Punctuation: ' + str(mistakes['punctuation']),
-                                    font=("Arial", 14))
+                                    font=("Proxima Nova Regular", 14))
                 punctuation.place(x=345, y=590)
                 incorrect = Label(self.window, text='Incorrect Character: ' + str(mistakes['incorrect']),
-                                  font=("Arial", 14))
+                                  font=("Proxima Nova Regular", 14))
                 incorrect.place(x=320, y=530)
+                if self.day_night == 'night':
+                    label3.config(bg='#323232', fg='#EBEBEB')
+                    button.config(bg='#323232', fg='#EBEBEB')
+                    label2.config(bg='#323232', fg='#EBEBEB')
+                    mistake.config(bg='#323232', fg='#EBEBEB')
+                    skipped.config(bg='#323232', fg='#EBEBEB')
+                    extra.config(bg='#323232', fg='#EBEBEB')
+                    punctuation.config(bg='#323232', fg='#EBEBEB')
+                    incorrect.config(bg='#323232', fg='#EBEBEB')
             else:
-                label3 = Label(self.window, text='Easy: Completed!', font=("Arial Bold", 24), fg='red')
+                label3 = Label(self.window, text='Easy: Completed!', font=("Proxima Nova Bold", 24), fg='red')
                 label3.place(x=310, y=200)
-                button = Button(self.window, text='Go Home', font=("Arial Bold", 20), command=self.go_home)
+                button = Button(self.window, text='Go Home', font=("Proxima Nova Bold", 20), command=self.go_home)
                 button.place(x=350, y=300)
+                if self.day_night == 'night':
+                    label3.config(bg='#323232', fg='#EBEBEB')
+                    button.config(bg='#323232', fg='#EBEBEB')
                 if not self.medium_allowed:
                     self.medium_allowed = True
                 elif not self.hard_allowed:
@@ -244,28 +263,37 @@ class App:
         else:
             self.streak = 0
             label4 = Label(self.window, text='Current streak: ' + str(self.streak) + '!',
-                           font=("Arial Bold", 24), fg='red')
+                           font=("Proxima Nova Bold", 24), fg='red')
             label4.place(x=290, y=200)
-            button = Button(self.window, text='Try Again', font=("Arial Bold", 20), command=self.begin_test)
+            button = Button(self.window, text='Try Again', font=("Proxima Nova Bold", 20), command=self.begin_test)
             button.place(x=320, y=300)
             label2 = Label(self.window, text='Get a streak of 3 to proceed to the next level.',
-                           font=("Arial Bold", 16))
+                           font=("Proxima Nova Bold", 16))
             label2.place(x=220, y=400)
 
-            mistake = Label(self.window, text='Mistakes', font=("Arial Bold", 20), fg='red')
+            mistake = Label(self.window, text='Mistakes', font=("Proxima Nova Bold", 20), fg='red')
             mistake.place(x=345, y=500)
             skipped = Label(self.window, text='Skipped Character: ' + str(mistakes['skipped']),
-                            font=("Arial", 14))
+                            font=("Proxima Nova Regular", 14))
             skipped.place(x=320, y=570)
             extra = Label(self.window, text='Extra Character: ' + str(mistakes['extra']),
-                          font=("Arial", 14))
+                          font=("Proxima Nova Regular", 14))
             extra.place(x=335, y=550)
             punctuation = Label(self.window, text='Punctuation: ' + str(mistakes['punctuation']),
-                                font=("Arial", 14))
+                                font=("Proxima Nova Regular", 14))
             punctuation.place(x=345, y=590)
             incorrect = Label(self.window, text='Incorrect Character: ' + str(mistakes['incorrect']),
-                              font=("Arial", 14))
+                              font=("Proxima Nova Regular", 14))
             incorrect.place(x=320, y=530)
+            if self.day_night == 'night':
+                label4.config(bg='#323232', fg='#EBEBEB')
+                button.config(bg='#323232', fg='#EBEBEB')
+                label2.config(bg='#323232', fg='#EBEBEB')
+                mistake.config(bg='#323232', fg='pink')
+                skipped.config(bg='#323232', fg='#EBEBEB')
+                extra.config(bg='#323232', fg='#EBEBEB')
+                punctuation.config(bg='#323232', fg='#EBEBEB')
+                incorrect.config(bg='#323232', fg='#EBEBEB')
 
     # Pick a random test of the set difficulty
     def pick_test(self) -> str:
@@ -292,12 +320,16 @@ class App:
         self.clear()
         self.add_home()
         label = Label(self.window, text='Press begin when you are ready. Press submit once you\'re done.',
-                      font=("Arial", 20))
+                      font=("Proxima Nova Regular", 20))
         label.place(x=120, y=100)
-        label2 = Label(self.window, text='The test will begin immediately.', font=("Arial Bold", 20))
+        label2 = Label(self.window, text='The test will begin immediately.', font=("Proxima Nova Bold", 20))
         label2.place(x=247, y=140)
-        begin = Button(self.window, text='BEGIN', font=("Arial Bold", 20), command=self.test)
+        begin = Button(self.window, text='BEGIN', font=("Proxima Nova Bold", 20), command=self.test)
         begin.place(x=350, y=200)
+        if self.day_night == 'night':
+            label.config(bg='#323232', fg='#EBEBEB')
+            label2.config(bg='#323232', fg='#EBEBEB')
+            begin.config(bg='#323232', fg='#EBEBEB')
 
     # Set the difficulty to medium and begin a test
     def medium(self) -> None:
@@ -309,10 +341,14 @@ class App:
             temp = Tk()
             temp.title('Not so fast!')
             temp.geometry("400x100+500+300")
-            label = Label(temp, text='This difficulty is locked!', font=("Arial Bold", 18))
-            label.place(x=94, y=10)
-            label2 = Label(temp, text='Complete lower difficulties to continue.', font=("Arial", 14))
-            label2.place(x=80, y=50)
+            label = Label(temp, text='This difficulty is locked!', font=("Proxima Nova Bold", 18))
+            label.place(x=100, y=10)
+            label2 = Label(temp, text='Complete lower difficulties to continue.', font=("Proxima Nova Regular", 14))
+            label2.place(x=70, y=50)
+            if self.day_night == 'night':
+                temp.config(bg='#323232')
+                label.config(bg='#323232', fg='#EBEBEB')
+                label2.config(bg='#323232', fg='#EBEBEB')
 
     # Set the difficulty to hard and begin a test
     def hard(self) -> None:
@@ -324,10 +360,14 @@ class App:
             temp = Tk()
             temp.title('Not so fast!')
             temp.geometry("400x100+500+300")
-            label = Label(temp, text='This difficulty is locked!', font=("Arial Bold", 18))
-            label.place(x=94, y=10)
-            label2 = Label(temp, text='Complete lower difficulties to continue.', font=("Arial", 14))
-            label2.place(x=80, y=50)
+            label = Label(temp, text='This difficulty is locked!', font=("Proxima Nova Bold", 18))
+            label.place(x=100, y=10)
+            label2 = Label(temp, text='Complete lower difficulties to continue.', font=("Proxima Nova Regular", 14))
+            label2.place(x=70, y=50)
+            if self.day_night == 'night':
+                temp.config(bg='#323232')
+                label.config(bg='#323232', fg='#EBEBEB')
+                label2.config(bg='#323232', fg='#EBEBEB')
 
     # Clear the application window
     def clear(self) -> None:
@@ -339,9 +379,11 @@ class App:
     def add_home(self) -> None:
         """Add a home button in the top left"""
         if self.day_night == 'day':
-            button = Button(self.window, text='Home', font=("Arial Bold", 14), command=self.confirm)
+            button = Button(self.window, text='Home', font=("Proxima Nova Bold", 14), command=self.confirm,
+                            fg='blue', bg='red')
         else:
-            button = Button(self.window, bg='red', text='Home', font=("Arial Bold", 14), command=self.confirm)
+            button = Button(self.window, text='Home', font=("Proxima Nova Bold", 14), command=self.confirm,
+                            fg='#EBEBEB', bg='#323232')
         button.place(x=10, y=10)
 
     # Confirm that the user wants to go home
@@ -355,12 +397,17 @@ class App:
         label = Label(self.confirm_window, text='Are you sure you want to return home?')
         label.place(x=77, y=0)
         label2 = Label(self.confirm_window, text='Progress at this difficulty level will be lost.',
-                       fg='red', font=("Arial Bold", 14))
+                       fg='red', font=("Proxima Nova Bold", 14))
         label2.place(x=57, y=25)
-        yes_button = Button(self.confirm_window, text='Yes', font=("Arial Bold", 14), command=self.go_home)
+        yes_button = Button(self.confirm_window, text='Yes', font=("Proxima Nova Bold", 14), command=self.go_home)
         yes_button.place(x=135, y=50)
-        no_button = Button(self.confirm_window, text='No', font=("Arial Bold", 14), command=self.cancel_go_home)
+        no_button = Button(self.confirm_window, text='No', font=("Proxima Nova Bold", 14), command=self.cancel_go_home)
         no_button.place(x=205, y=50)
+        if self.day_night == 'night':
+            label.config(bg='#323232', fg='#EBEBEB')
+            label2.config(bg='#323232', fg='#EBEBEB')
+            yes_button.config(bg='#323232')
+            no_button.config(bg='#323232')
         self.confirm_window.mainloop()
 
     # Close the confirmation window to go home
